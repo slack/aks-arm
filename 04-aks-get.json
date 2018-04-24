@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceID": {
+      "type": "string",
+      "metadata": {
+        "description": "The ARM ID of the Managed Cluster resource."
+      }
+    },
+    "apiVersion": {
+      "type": "string",
+      "defaultValue": "2017-08-31",
+      "metadata": {
+        "description": "The name of the Managed Cluster resource."
+      }
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+  ],
+  "outputs": {
+    "AKS": {
+      "type": "object",
+      "value": "[reference(parameters('resourceID'), parameters('apiVersion'))]"
+    }
+  }
+}

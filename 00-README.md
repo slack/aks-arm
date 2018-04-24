@@ -1,3 +1,8 @@
+
+Manage AKS from Portal: https://aka.ms/aksmanagepreview
+Create new AKS Cluster from Portal: https://aka.ms/createakspreview
+
+
 ```
 export AKS_SUB=8ecadfc9-d1a3-4ea4-b844-0d9f87e4d7c8
 
@@ -40,4 +45,12 @@ az group deployment create -n 03-enable-container-health -g ${AKS_RG} --template
     enableHttpApplicationRouting=true \
     enableOmsAgent=true \
     workspaceRegion="East US"
+```
+
+## GET AKS Cluster
+
+```
+# /subscriptions/8ecadfc9-d1a3-4ea4-b844-0d9f87e4d7c8/resourceGroups/jahanse-canadaeast/providers/Microsoft.ContainerService/managedClusters/aks-basic01
+az group deployment create -n 04-aks-get -g ${AKS_RG} --template-file 04-aks-get.json \
+    --parameters resourceID=/subscriptions/${AKS_SUB}/resourceGroups/${AKS_RG}/providers/Microsoft.ContainerService/managedClusters/${AKS_NAME}
 ```
