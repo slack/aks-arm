@@ -50,7 +50,5 @@ az group deployment create -n 03-enable-container-health -g ${AKS_RG} --template
 ## GET AKS Cluster
 
 ```
-# /subscriptions/8ecadfc9-d1a3-4ea4-b844-0d9f87e4d7c8/resourceGroups/jahanse-canadaeast/providers/Microsoft.ContainerService/managedClusters/aks-basic01
-az group deployment create -n 04-aks-get -g ${AKS_RG} --template-file 04-aks-get.json \
-    --parameters resourceID=/subscriptions/${AKS_SUB}/resourceGroups/${AKS_RG}/providers/Microsoft.ContainerService/managedClusters/${AKS_NAME}
+az resource show --api-version 2018-03-31 --id /subscriptions/${AKS_SUB}/resourceGroups/${AKS_RG}/providers/Microsoft.ContainerService/managedClusters/${AKS_NAME}
 ```
