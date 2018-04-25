@@ -1,0 +1,248 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Managed Cluster resource."
+      }
+    },
+    "dnsPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+      }
+    },
+    "osDiskSizeGB": {
+      "type": "int",
+      "defaultValue": 0,
+      "metadata": {
+        "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+      },
+      "minValue": 0,
+      "maxValue": 1023
+    },
+    "agentCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description": "The number of agent nodes for the cluster."
+      },
+      "minValue": 1,
+      "maxValue": 50
+    },
+    "agentVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_v2",
+      "metadata": {
+        "description": "The size of the Virtual Machine."
+      }
+    },
+    "linuxAdminUsername": {
+      "type": "string",
+      "defaultValue": "azureuser",
+      "metadata": {
+        "description": "User name for the Linux Virtual Machines."
+      }
+    },
+    "servicePrincipalClientId": {
+      "metadata": {
+        "description": "Client ID (used by cloudprovider)"
+      },
+      "type": "securestring"
+    },
+    "servicePrincipalClientSecret": {
+      "metadata": {
+        "description": "The Service Principal Client Secret."
+      },
+      "type": "securestring"
+    },
+    "osType": {
+      "type": "string",
+      "defaultValue": "Linux",
+      "allowedValues": [
+        "Linux"
+      ],
+      "metadata": {
+        "description": "The type of operating system."
+      }
+    },
+    "maxPods": {
+      "type": "int",
+      "defaultValue": 30,
+      "metadata": {
+        "description": "max pods per node"
+      }
+    },
+    "networkPlugin": {
+      "type": "string",
+      "allowedValues": [
+        "kubenet",
+        "azure"
+      ],
+      "metadata": {
+        "description": "IPAM plugin for AKS"
+      }
+    },
+    "serviceCidr": {
+      "type": "string",
+      "metadata": {
+        "description": "Kubernetes service range"
+      }
+    },
+    "dnsServiceIP": {
+      "type": "string",
+      "metadata": {
+        "description": "IP address for Kubernetes DNS service"
+      }
+    },
+    "dockerBridgeCidr": {
+      "type": "string",
+      "metadata": {
+        "description": "IP address for Docker bridge"
+      }
+    },
+    "vnetSubnetID": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Resource Manager ID for the Subnet to hold AKS nodes"
+      }
+    },
+    "kubernetesVersion": {
+      "type": "string",
+      "defaultValue": "1.9.6",
+      "allowedValues": [
+        "1.7.15",
+        "1.8.11",
+        "1.9.6"
+      ],
+      "metadata": {
+        "description": "The version of Kubernetes."
+      }
+    },
+    "enableHttpApplicationRouting": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "boolean flag to turn on and off of http application routing"
+      }
+    },
+    "workspaceRegion": {
+      "type": "string",
+      "defaultValue": "East US",
+      "allowedValues": [
+        "Southeast Asia",
+        "Australia Southeast",
+        "West Europe",
+        "East US"
+      ],
+      "metadata": {
+        "description": "Specify the region for your OMS workspace"
+      }
+    },
+    "enableOmsAgent": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "boolean flag to turn on and off of omsagent addon"
+      }
+    },
+    "omsSku": {
+      "type": "string",
+      "defaultValue": "free",
+      "allowedValues": [
+        "free",
+        "standalone",
+        "pernode"
+      ],
+      "metadata": {
+        "description": "Select the SKU for your workspace"
+      }
+    }
+  },
+  "variables": {
+    "adminUsername": "[parameters('linuxAdminUsername')]",
+    "agentCount": "[parameters('agentCount')]",
+    "agentVMSize": "[parameters('agentVMSize')]",
+    "dnsPrefix": "[parameters('dnsPrefix')]",
+    "dnsServiceIP": "[parameters('dnsServiceIP')]",
+    "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]",
+    "kubernetesVersion": "[parameters('kubernetesVersion')]",
+    "networkPlugin": "[parameters('networkPlugin')]",
+    "maxPods": "[parameters('maxPods')]",
+    "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+    "osType": "[parameters('osType')]",
+    "resourceName": "[parameters('resourceName')]",
+    "serviceCidr": "[parameters('serviceCidr')]",
+    "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
+    "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
+    "vnetSubnetID": "[parameters('vnetSubnetID')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('resourceName')]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2015-11-01-preview",
+      "location": "[parameters('workspaceRegion')]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('omsSku')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2018-03-31",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', variables('resourceName'))]"
+      ],
+      "type": "Microsoft.ContainerService/managedClusters",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('resourceName')]",
+      "properties": {
+        "kubernetesVersion": "[variables('kubernetesVersion')]",
+        "dnsPrefix": "[variables('dnsPrefix')]",
+        "addonProfiles": {
+          "httpApplicationRouting": {
+            "enabled": "[parameters('enableHttpApplicationRouting')]"
+          },
+          "omsagent": {
+            "enabled": "[parameters('enableOmsAgent')]",
+            "config": {
+              "logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('resourceName'))]"
+            }
+          }
+        },
+        "agentPoolProfiles": [
+          {
+            "name": "agentpool",
+            "osDiskSizeGB": "[variables('osDiskSizeGB')]",
+            "count": "[variables('agentCount')]",
+            "vmSize": "[variables('agentVMSize')]",
+            "osType": "[variables('osType')]",
+            "vnetSubnetID": "[variables('vnetSubnetID')]",
+            "maxPods": "[variables('maxPods')]",
+            "storageProfile": "ManagedDisks"
+          }
+        ],
+        "servicePrincipalProfile": {
+          "ClientId": "[parameters('servicePrincipalClientId')]",
+          "Secret": "[parameters('servicePrincipalClientSecret')]"
+        },
+        "networkProfile": {
+          "networkPlugin": "[variables('networkPlugin')]",
+          "serviceCidr": "[variables('serviceCidr')]",
+          "dnsServiceIP": "[variables('dnsServiceIP')]",
+          "dockerBridgeCidr": "[variables('dockerBridgeCidr')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "AKS": {
+      "type": "object",
+      "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', variables('resourceName')))]"
+    }
+  }
+}
+
