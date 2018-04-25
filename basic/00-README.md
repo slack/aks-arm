@@ -4,13 +4,12 @@
 
 
 ```
-export AKS_SUB=8ecadfc9-d1a3-4ea4-b844-0d9f87e4d7c8
-
-export SPN_CLIENT_ID=398d56f3-49de-44ee-aae6-b07a9f0237b4
 export SPN_PW=
+export SPN_CLIENT_ID=4f8dc533-caad-41c1-9ac2-00dcadd39c7c
 
-export AKS_RG=jahanse-canadaeast
-export AKS_NAME=aks-basic01
+export AKS_SUB=dd323474-a5cb-40c9-9360-3dbc04a7cf90
+export AKS_RG=gabrtv-build-demo
+export AKS_NAME=build-demo-2
 ```
 
 ## Create 1.9.6 AKS Cluster
