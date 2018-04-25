@@ -1,6 +1,6 @@
 
-Manage AKS from Portal: https://aka.ms/aksmanagepreview
-Create new AKS Cluster from Portal: https://aka.ms/createakspreview
+* Manage AKS from Portal: https://aka.ms/aksmanagepreview
+* Create new AKS Cluster from Portal: https://aka.ms/createakspreview
 
 
 ```
