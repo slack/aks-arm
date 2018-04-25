@@ -152,9 +152,9 @@
   },
   "resources": [
     {
-      "name": "[variables('resourceName')]",
-      "type": "Microsoft.OperationalInsights/workspaces",
       "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "name": "[variables('resourceName')]",
       "location": "[parameters('workspaceRegion')]",
       "properties": {
         "sku": {
@@ -163,10 +163,31 @@
       }
     },
     {
+      "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationsManagement/solutions",
+      "name": "ContainerInsights([variables('resourceName')])",
+      "location": "canadacentral",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', variables('resourceName'))]"
+      ],
+      "plan": {
+        "name": "ContainerInsights([variables('resourceName')])",
+        "product": "OMSGallery/ContainerInsights",
+        "promotionCode": "",
+        "publisher": "Microsoft"
+      },
+      "properties": {
+        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights', 'workspaces', variables('resourceName'))]"
+      }
+    },
+    {
       "apiVersion": "2018-03-31",
       "type": "Microsoft.ContainerService/managedClusters",
-      "location": "[resourceGroup().location]",
       "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', variables('resourceName'))]"
+      ],
       "properties": {
         "kubernetesVersion": "[variables('kubernetesVersion')]",
         "dnsPrefix": "[variables('dnsPrefix')]",
