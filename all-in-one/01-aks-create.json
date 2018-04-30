@@ -126,7 +126,7 @@
     },
     "omsSku": {
       "type": "string",
-      "defaultValue": "free",
+      "defaultValue": "standalone",
       "allowedValues": [
         "free",
         "standalone",
