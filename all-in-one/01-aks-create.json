@@ -178,7 +178,7 @@
         "publisher": "Microsoft"
       },
       "properties": {
-        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights', 'workspaces', variables('resourceName'))]"
+        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('resourceName'))]"
       }
     },
     {
